@@ -1,27 +1,46 @@
 # Prime lib
+import itertools
 import math
 
 
-def is_prime(x, primes):
-    roof = int(math.sqrt(x))
-    for p in primes:
-        if p > roof:
-            break
-        if x % p == 0:
-            return False
-    return True
+class Prime(object):
+    def __init__(self):
+        self.primes = []
 
+    def prime_stream(self):
+        """
+        Infinite prime stream
+        """
+        for i in itertools.count(2):
+            for j in self.primes:
+                if i == j:
+                    yield i
+                if i % j == 0:
+                    break
+            else:
+                self.primes.append(i)
+                yield i
 
-def primes_under(x):
-    primes = []
-    for i in xrange(2, int(x)+1):
-        for j in primes:
-            if i % j == 0:
+    def is_prime(self, x, primes=None):
+        if primes is None:
+            primes = self.prime_stream()
+
+        roof = int(math.sqrt(x))
+        for p in primes:
+            if p > roof:
                 break
-        else:
-            primes.append(i)
+            if x % p == 0:
+                return False
+        return True
 
-    return primes
+    def primes_between(self, start=2, end=None):
+        """
+        Return primes in [start, end)
+        """
+        stream = itertools.dropwhile(lambda x: x < start, self.prime_stream())
+        if end:
+            stream = itertools.takewhile(lambda x: x < end, self.prime_stream())
+        return stream
 
 
 def sum_of_divisors(x, primes):
@@ -49,3 +68,5 @@ def sum_of_divisors(x, primes):
     prime_factors = map(lambda x: (x[0]**(x[1]+1)-1)/(x[0]-1), prime_factors)
 
     return reduce(lambda x, y: x * y, prime_factors) - x
+
+prime = Prime()

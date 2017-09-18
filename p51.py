@@ -1,5 +1,6 @@
 # 51
 # Find the smallest prime which, by replacing part of the number with the same digit,
+# is part of an eight prime value family
 from prime import Prime
 
 
